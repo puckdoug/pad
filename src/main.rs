@@ -7,9 +7,9 @@ fn main() {
     // read stdin if there is data to be consumed
     read_stdin();
     // start a thread reading input lines
-    read_input_lines();
+    let line = read_input_lines();
     // start a thread consuming and processing lines, which ouputs the result to the console
-    process_lines();
+    process_lines(line);
 }
 
 fn parse_command_line() {
@@ -40,22 +40,26 @@ fn read_stdin() {
     println!("read_stdin");
 }
 
-fn read_input_lines() {
+fn read_input_lines() -> String {
     // read lines from stdin
     // send lines to the processing thread
-    println!("read_input_lines");
+    let mut rec = String::new();
+    rec.push_str("placeholder");
+    rec
 }
 
-fn process_lines() {
+fn process_lines(line: String) -> String {
     // receive lines from the input thread
     // process the lines
     // output the result to the console
-    println!("process_lines");
+    let mut amended = String::new();
+    amended.push_str(&line);
+    amended
 }
 
 #[cfg(test)]
 mod tests {
-    //use super::*;
+    use super::*;
 
     #[test]
     fn test_read_input_lines() {
@@ -64,6 +68,9 @@ mod tests {
 
     #[test]
     fn test_process_lines() {
-        assert_eq!(1, 1);
+        let mut foo = String::new();
+        foo.push_str("blah blah");
+        let bar = process_lines(foo.clone());
+        assert_eq!(foo, bar);
     }
 }

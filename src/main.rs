@@ -14,6 +14,14 @@ fn main() {
 
 fn parse_command_line() {
     // parse the command line arguments
+    //
+    // position 1 or --length, --llength or --rlength
+    // position 2 or --padding, --lpadding or --lpadding
+    // --left or if command is named lpad
+    // --right or if command is named rpad
+    // --word to pad every single word, keeping line order
+    // --line to pad every line (default)
+    //
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
 }
@@ -43,4 +51,19 @@ fn process_lines() {
     // process the lines
     // output the result to the console
     println!("process_lines");
+}
+
+#[cfg(test)]
+mod tests {
+    //use super::*;
+
+    #[test]
+    fn test_read_input_lines() {
+        assert_eq!(1, 1);
+    }
+
+    #[test]
+    fn test_process_lines() {
+        assert_eq!(1, 1);
+    }
 }

@@ -1,18 +1,26 @@
+use crate::config::*;
 use crate::input::*;
 use crate::output::*;
+use std::env;
+use std::io;
 // use std::result;
 use std::sync::mpsc::channel;
 use std::thread;
 
+pub mod config;
 pub mod input;
 pub mod output;
 
 fn main() {
-    // parse any arguments from the command line
-    parse_command_line();
+    // gather the command-line arguments
+    let args: Vec<String> = env::args().collect();
+    let mut config = Config::new();
+
+    // parse the arguments from the command line
+    parse_command_line(args, &mut config);
 
     // read stdin if there is data to be consumed
-    read_stdin();
+    read_stdin(io::stdin());
 
     // create sending and receiving ends of the channel
     let (sender, receiver) = channel();

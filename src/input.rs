@@ -1,6 +1,35 @@
 // use std::ffi::OsStr;
+use clap::Parser;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    // whether to pad left
+    #[arg(short, long)]
+    left: bool,
+
+    // whether to pad right
+    #[arg(short, long)]
+    right: bool,
+
+    // character to use to pad left
+    #[arg(long, default_value = "0")]
+    lpad: String,
+
+    // character to use to pad right
+    #[arg(long, default_value = "0")]
+    rpad: String,
+
+    // amount of left padding
+    #[arg(long, default_value_t = 1)]
+    llen: u32,
+
+    // amount of right padding
+    #[arg(long, default_value_t = 1)]
+    rlen: u32,
+}
 
 pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
     // parse the command line arguments

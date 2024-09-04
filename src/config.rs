@@ -6,8 +6,10 @@ pub enum Approach {
 pub struct Config {
     pub left: bool,
     pub right: bool,
-    pub lpad_chars: String,
-    pub rpad_chars: String,
+    pub lpad: String,
+    pub llen: u32,
+    pub rpad: String,
+    pub rlen: u32,
     pub approach: Approach,
 }
 
@@ -16,8 +18,10 @@ impl Config {
         Config {
             left: false,
             right: false,
-            lpad_chars: String::from(""),
-            rpad_chars: String::from(""),
+            lpad: String::from(""),
+            llen: 0,
+            rpad: String::from(""),
+            rlen: 0,
             approach: Approach::Line,
         }
     }

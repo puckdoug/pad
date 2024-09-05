@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 // use std::ffi::OsStr;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
@@ -20,23 +21,20 @@ pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
     // binary just named pad will only work with --left or --right
 
     match bin_name {
-        "lpad" => config.left = true,
         "rpad" => config.right = true,
+        "lpad" => config.left = true, // drop if this is truly redunant
         _ => config.left = true,
     }
 
     // skip command name (args[0]) and process everything else
-    for arg in &args[1..] {
+    let mut arglist = VecDeque::from(args);
+    let _cmd = arglist.pop_front(); // skip the command name
+    while let Some(arg) = arglist.pop_front() {
         match arg.as_str() {
-            "--left" => config.left = true,
-            "--right" => config.right = true,
-            "--lpad" => config.lpad = String::from("foo"), // should be argument
-            "--rpad" => config.rpad = String::from("bar"), // should be argument
-            "--llen" => config.llen = 1,                   // should be argument
-            "--rlen" => config.rlen = 1,                   // should be argument
-            _ => (),                                       // print usage
+            "--left" | "-l" => config.left = true,
+            "--right" | "-r" => config.right = true,
+            _ => (),
         }
-        println!("{arg}");
     }
 }
 
@@ -52,48 +50,85 @@ pub fn read_stdin(input: Stdin) {
 }
 
 #[cfg(test)]
-mod tests {
+mod command_line {
 
-    #[test]
-    fn left_true_when_named_lpad() {
-        let mut config = crate::Config::new();
-        crate::parse_command_line(vec![String::from("path/to/lpad")], &mut config);
-        assert_eq!(config.left, true);
+    mod basic {
+
+        #[test]
+        fn left_true_when_named_lpad() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("path/to/lpad")], &mut config);
+            assert_eq!(config.left, true);
+        }
+
+        #[test]
+        fn right_true_when_named_rpad() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("./rpad")], &mut config);
+            assert_eq!(config.right, true);
+        }
+
+        #[test]
+        fn left_true_when_other_name() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("./pad")], &mut config);
+            assert_eq!(config.left, true);
+        }
+
+        #[test]
+        fn right_false_when_other_name() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("./foo")], &mut config);
+            assert_eq!(config.right, false);
+        }
+
+        #[test]
+        fn left_and_right_together_are_ok() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(
+                vec![
+                    String::from("pad"),
+                    String::from("--left"),
+                    String::from("--right"),
+                ],
+                &mut config,
+            );
+            assert_eq!(config.right, true);
+            assert_eq!(config.left, true);
+        }
+
+        #[test]
+        fn r_is_ok_for_right() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("./pad"), String::from("-r")], &mut config);
+            assert_eq!(config.right, true);
+        }
+
+        #[test]
+        fn l_is_ok_for_left() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(vec![String::from("./pad"), String::from("-l")], &mut config);
+            assert_eq!(config.left, true);
+        }
     }
 
-    #[test]
-    fn right_true_when_named_rpad() {
-        let mut config = crate::Config::new();
-        crate::parse_command_line(vec![String::from("./rpad")], &mut config);
-        assert_eq!(config.right, true);
+    mod advanced {
+        #[test]
+        #[ignore = "not yet implemented"]
+        fn with_no_arguments_lpad_to_width_of_largest_word() {
+            assert_eq!(1, 1);
+        }
+
+        #[test]
+        #[ignore = "not yet implemented"]
+        fn rpad_with_no_args_pad_right_to_width_of_largest_word() {
+            assert_eq!(1, 1);
+        }
     }
 
-    #[test]
-    fn left_true_when_other_name() {
-        let mut config = crate::Config::new();
-        crate::parse_command_line(vec![String::from("./pad")], &mut config);
-        assert_eq!(config.left, true);
-    }
-
-    #[test]
-    fn right_false_when_other_name() {
-        let mut config = crate::Config::new();
-        crate::parse_command_line(vec![String::from("./foo")], &mut config);
-        assert_eq!(config.right, false);
-    }
-
-    #[test]
-    fn left_and_right_together_are_ok() {
-        let mut config = crate::Config::new();
-        crate::parse_command_line(
-            vec![
-                String::from("pad"),
-                String::from("--left"),
-                String::from("--right"),
-            ],
-            &mut config,
-        );
-        assert_eq!(config.right, true);
-        assert_eq!(config.left, true);
-    }
+    // #[test]
+    // #[should_panic(expected = "values don't match")]
+    // fn panic_example() {
+    //     assert_eq!(1, 2, "values don't match");
+    // }
 }

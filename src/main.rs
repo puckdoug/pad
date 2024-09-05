@@ -1,6 +1,8 @@
 use crate::config::*;
 use crate::input::*;
+use crate::lpad::*;
 use crate::output::*;
+// use crate::rpad::*;
 use std::env;
 use std::io;
 // use std::result;
@@ -9,7 +11,9 @@ use std::thread;
 
 pub mod config;
 pub mod input;
+pub mod lpad;
 pub mod output;
+pub mod rpad;
 
 fn main() {
     // gather the command-line arguments

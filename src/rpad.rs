@@ -20,6 +20,9 @@ pub fn rpad_word_list(words: Vec<String>, config: &crate::Config) -> Vec<String>
     padded
 }
 
+//------------------------------------------------------------------------------
+// Unit Tests
+//------------------------------------------------------------------------------
 mod word {
     use super::*;
 

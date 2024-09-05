@@ -2,9 +2,9 @@ pub fn lpad(word: String, config: &crate::Config) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
     // as long as the padding is more than the word length, pad
-    if config.llen > word.len() {
+    if config.llen > word.chars().count() {
         pad_str = std::iter::repeat(config.lpad.clone())
-            .take(config.llen - word.len())
+            .take(config.llen - word.chars().count())
             .collect::<String>();
     }
     pad_str.push_str(&word);
@@ -61,6 +61,15 @@ mod word {
         let word = String::from("equal");
         let padded = lpad(word, &config);
         assert_eq!(padded, "equal");
+    }
+
+    #[test]
+    fn non_utf8() {
+        let mut config = crate::Config::new();
+        config.llen = 12;
+        let word = String::from("ラウトは難しいです！");
+        let padded = lpad(word, &config);
+        assert_eq!(padded, "00ラウトは難しいです！")
     }
 }
 

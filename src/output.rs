@@ -3,8 +3,8 @@
 pub fn max_word_length(words: Vec<String>) -> usize {
     let mut max = 0;
     for word in words {
-        if word.len() > max {
-            max = word.len();
+        if word.chars().count() > max {
+            max = word.chars().count(); // len() is wrong if not utf-8
         }
     }
     max
@@ -89,7 +89,7 @@ mod processing {
         //     let mut padded = process_lines(lines.clone());
 
         //     for line in padded {
-        //         assert_eq!(config.llen, line.len());
+        //         assert_eq!(config.llen, line.chars().count());
         //     }
         // }
     }

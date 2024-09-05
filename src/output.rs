@@ -1,6 +1,3 @@
-// use crate::lpad_word_list;
-// use crate::rpad_word_list;
-
 // When no length is provided, pad to the width of the longest item in the
 // list. For this, need to scan the entire list to find the length.
 pub fn max_word_length(words: &Vec<String>) -> usize {
@@ -11,14 +8,6 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
         }
     }
     max
-}
-
-pub fn read_input_lines() -> String {
-    // read lines from stdin
-    // send lines to the processing thread
-    let mut rec = String::new();
-    rec.push_str("placeholder");
-    rec
 }
 
 pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {

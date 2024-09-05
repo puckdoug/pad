@@ -49,6 +49,13 @@ pub fn read_stdin(input: Stdin) {
     println!("read_stdin");
 }
 
+pub fn read_input_lines() -> String {
+    // read lines from stdin
+    // send lines to the processing thread
+    let mut rec = String::new();
+    rec.push_str("placeholder");
+    rec
+}
 //------------------------------------------------------------------------------
 // Unit Tests
 //------------------------------------------------------------------------------

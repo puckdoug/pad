@@ -6,10 +6,10 @@ pub enum Approach {
 pub struct Config {
     pub left: bool,
     pub lpad: String,
-    pub llen: u32,
+    pub llen: usize,
     pub right: bool,
     pub rpad: String,
-    pub rlen: u32,
+    pub rlen: usize,
     pub approach: Approach,
 }
 

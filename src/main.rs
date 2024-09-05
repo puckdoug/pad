@@ -13,7 +13,8 @@ pub mod output;
 
 fn main() {
     // gather the command-line arguments
-    let args: Vec<String> = env::args().collect();
+    // let args: Vec<ArgsOs> = env::args_os().collect();
+    let args: Vec<String> = env::args().collect(); // todo - don't collect, pass the iterator
     let mut config = Config::new();
 
     // parse the arguments from the command line
@@ -33,7 +34,7 @@ fn main() {
     // start a thread consuming and processing lines, which ouputs
     // the result to the console
     while let Ok(to_process) = receiver.recv() {
-        let padded = process_lines(to_process);
-        println!("{padded}");
+        let foo = vec![to_process];
+        let _padded = process_lines(foo);
     }
 }

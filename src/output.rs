@@ -20,7 +20,6 @@ pub fn find_max_length(lines: Vec<String>) -> usize {
 
 pub fn lpad(word: String, config: &crate::Config) -> String {
     // pad the word to the length of the longest word
-    // let pad_len = config.llen - word.len();
     let mut pad_str = String::new();
     // as long as the padding is more than the word length, pad
     if config.llen > word.len() {
@@ -30,6 +29,20 @@ pub fn lpad(word: String, config: &crate::Config) -> String {
     }
     pad_str.push_str(&word);
     pad_str
+}
+
+pub fn rpad(word: String, config: &crate::Config) -> String {
+    // pad the word to the length of the longest word
+    let mut pad_str = String::new();
+    // as long as the padding is more than the word length, pad
+    if config.llen > word.len() {
+        pad_str = std::iter::repeat(config.rpad.clone())
+            .take(config.llen - word.len())
+            .collect::<String>();
+    }
+    let mut rpadded = String::from(&word);
+    rpadded.push_str(&pad_str);
+    rpadded
 }
 
 pub fn process_lines(lines: Vec<String>) -> Vec<String> {
@@ -76,11 +89,9 @@ mod processing {
     }
 
     mod base {
-
         use super::*;
 
         mod lpad {
-
             use super::*;
 
             #[test]
@@ -117,6 +128,47 @@ mod processing {
                 config.llen = 5;
                 let word = String::from("equal");
                 let padded = lpad(word, &config);
+                assert_eq!(padded, "equal");
+            }
+        }
+
+        mod rpad {
+            use super::*;
+
+            #[test]
+            fn rpad_one_word() {
+                let mut config = crate::Config::new();
+                config.llen = 5;
+                let word = String::from("one");
+                let padded = rpad(word, &config);
+                assert_eq!(padded, "one00");
+            }
+
+            #[test]
+            fn rpad_with_spaces() {
+                let mut config = crate::Config::new();
+                config.llen = 5;
+                config.rpad = String::from(" ");
+                let word = String::from("one");
+                let padded = rpad(word, &config);
+                assert_eq!(padded, "one  ");
+            }
+
+            #[test]
+            fn rpad_word_longer_than_pad() {
+                let mut config = crate::Config::new();
+                config.llen = 5;
+                let word = String::from("longer");
+                let padded = rpad(word, &config);
+                assert_eq!(padded, "longer");
+            }
+
+            #[test]
+            fn rpad_word_same_as_pad() {
+                let mut config = crate::Config::new();
+                config.llen = 5;
+                let word = String::from("equal");
+                let padded = rpad(word, &config);
                 assert_eq!(padded, "equal");
             }
         }

@@ -118,5 +118,23 @@ mod processing {
                 vec!["00one00", "00two00", "three00", "0four00", "0five00"]
             );
         }
+
+        #[test]
+        fn process_both_non_utf8() {
+            let mut config = crate::Config::new();
+            config.left = true;
+            config.llen = 6;
+            config.right = true;
+            config.rlen = 10;
+            let mut lines = Vec::new();
+            lines.push(String::from("one"));
+            lines.push(String::from("two"));
+            lines.push(String::from("ラウトは難しいです！"));
+            let amended = process_lines(lines.clone(), &mut config);
+            assert_eq!(
+                amended,
+                vec!["000one0000", "000two0000", "ラウトは難しいです！"]
+            );
+        }
     }
 }

@@ -11,6 +11,14 @@ pub fn lpad(word: String, config: &crate::Config) -> String {
     pad_str
 }
 
+pub fn lpad_word_list(words: Vec<String>, config: &crate::Config) -> Vec<String> {
+    let mut padded = Vec::new();
+    for word in words {
+        padded.push(lpad(word, &config));
+    }
+    padded
+}
+
 mod word {
     use super::*;
 
@@ -49,5 +57,45 @@ mod word {
         let word = String::from("equal");
         let padded = lpad(word, &config);
         assert_eq!(padded, "equal");
+    }
+}
+
+mod word_list {
+    use super::*;
+
+    #[test]
+    fn five_words() {
+        let mut words = Vec::new();
+        words.push(String::from("one"));
+        words.push(String::from("two"));
+        words.push(String::from("three"));
+        words.push(String::from("four"));
+        words.push(String::from("five"));
+        let mut config = crate::Config::new();
+        config.llen = 5;
+        let padded = lpad_word_list(words, &config);
+        assert_eq!(padded[0], "00one");
+        assert_eq!(padded[1], "00two");
+        assert_eq!(padded[2], "three");
+        assert_eq!(padded[3], "0four");
+        assert_eq!(padded[4], "0five");
+    }
+    #[test]
+    fn five_words_with_space() {
+        let mut words = Vec::new();
+        words.push(String::from("one"));
+        words.push(String::from("two"));
+        words.push(String::from("three"));
+        words.push(String::from("four"));
+        words.push(String::from("five"));
+        let mut config = crate::Config::new();
+        config.llen = 5;
+        config.lpad = String::from(" ");
+        let padded = lpad_word_list(words, &config);
+        assert_eq!(padded[0], "  one");
+        assert_eq!(padded[1], "  two");
+        assert_eq!(padded[2], "three");
+        assert_eq!(padded[3], " four");
+        assert_eq!(padded[4], " five");
     }
 }

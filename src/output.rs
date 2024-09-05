@@ -51,6 +51,16 @@ mod processing {
             assert_eq!(5, max);
         }
 
+        #[test]
+        fn longest_non_utf8() {
+            let mut lines = Vec::new();
+            lines.push(String::from("one"));
+            lines.push(String::from("two"));
+            lines.push(String::from("ラウトは難しいです！"));
+            let max = max_word_length(lines);
+            assert_eq!(10, max);
+        }
+
         // #[test]
         // #[ignore = "not yet implemented"]
         // fn test_read_input_lines() {

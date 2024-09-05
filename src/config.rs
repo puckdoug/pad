@@ -18,10 +18,10 @@ impl Config {
         Config {
             left: false,
             lpad: String::from("0"),
-            llen: 2,
+            llen: 0,
             right: false,
             rpad: String::from("0"),
-            rlen: 2,
+            rlen: 0,
             approach: Approach::Line,
         }
     }

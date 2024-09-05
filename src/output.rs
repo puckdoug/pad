@@ -1,6 +1,9 @@
+// use crate::lpad_word_list;
+// use crate::rpad_word_list;
+
 // When no length is provided, pad to the width of the longest item in the
-// list. For this, need to scan the entire list
-pub fn max_word_length(words: Vec<String>) -> usize {
+// list. For this, need to scan the entire list to find the length.
+pub fn max_word_length(words: &Vec<String>) -> usize {
     let mut max = 0;
     for word in words {
         if word.chars().count() > max {
@@ -18,15 +21,22 @@ pub fn read_input_lines() -> String {
     rec
 }
 
-pub fn process_lines(lines: Vec<String>) -> Vec<String> {
-    // receive lines from the input thread
-    // process the lines
-    // output the result to the console
-    let mut amended = Vec::new();
-    for line in lines {
-        amended.push(crate::lpad(line, &crate::Config::new()));
+pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
+    if config.left == true {
+        if config.llen == 0 {
+            config.llen = max_word_length(&lines);
+        }
+        lines = crate::lpad_word_list(&lines, &config);
     }
-    amended
+
+    if config.right == true {
+        if config.rlen == 0 {
+            config.rlen = max_word_length(&lines);
+        }
+        lines = crate::rpad_word_list(&lines, &config)
+    }
+
+    lines
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +57,7 @@ mod processing {
             lines.push(String::from("three"));
             lines.push(String::from("four"));
             lines.push(String::from("five"));
-            let max = max_word_length(lines);
+            let max = max_word_length(&lines);
             assert_eq!(5, max);
         }
 
@@ -57,50 +67,56 @@ mod processing {
             lines.push(String::from("one"));
             lines.push(String::from("two"));
             lines.push(String::from("ラウトは難しいです！"));
-            let max = max_word_length(lines);
+            let max = max_word_length(&lines);
             assert_eq!(10, max);
         }
 
-        // #[test]
-        // #[ignore = "not yet implemented"]
-        // fn test_read_input_lines() {
-        //     assert_eq!(1, 1);
-        // }
+        #[test]
+        fn process_default_left_only() {
+            let mut config = crate::Config::new();
+            config.left = true;
+            let mut lines = Vec::new();
+            lines.push(String::from("one"));
+            lines.push(String::from("two"));
+            lines.push(String::from("three"));
+            lines.push(String::from("four"));
+            lines.push(String::from("five"));
+            let amended = process_lines(lines.clone(), &mut config);
+            assert_eq!(amended, vec!["00one", "00two", "three", "0four", "0five"]);
+        }
 
-        // #[test]
-        // #[ignore = "not yet implemented"]
-        // fn test_process_lines() {
-        //     let mut foo = String::new();
-        //     foo.push_str("blah blah");
-        //     let bar = process_lines(foo.clone());
-        //     assert_eq!(foo, bar);
-        // }
-    }
+        #[test]
+        fn process_default_right_only() {
+            let mut config = crate::Config::new();
+            config.right = true;
+            let mut lines = Vec::new();
+            lines.push(String::from("one"));
+            lines.push(String::from("two"));
+            lines.push(String::from("three"));
+            lines.push(String::from("four"));
+            lines.push(String::from("five"));
+            let amended = process_lines(lines.clone(), &mut config);
+            assert_eq!(amended, vec!["one00", "two00", "three", "four0", "five0"]);
+        }
 
-    mod default {
-
-        // use super::*;
-
-        // #[test]
-        // #[ignore = "not yet implemented"]
-        // fn left_pad_no_options() {
-        //     let mut config = crate::config::Config::new();
-        //     config.left = true;
-
-        //     let mut lines = Vec::new();
-        //     lines.push(String::from("one"));
-        //     lines.push(String::from("two"));
-        //     lines.push(String::from("three"));
-        //     lines.push(String::from("four"));
-        //     lines.push(String::from("five"));
-
-        //     config.llen = max_word_length(lines.clone());
-
-        //     let mut padded = process_lines(lines.clone());
-
-        //     for line in padded {
-        //         assert_eq!(config.llen, line.chars().count());
-        //     }
-        // }
+        #[test]
+        fn process_both() {
+            let mut config = crate::Config::new();
+            config.left = true;
+            config.llen = 5;
+            config.right = true;
+            config.rlen = 7;
+            let mut lines = Vec::new();
+            lines.push(String::from("one"));
+            lines.push(String::from("two"));
+            lines.push(String::from("three"));
+            lines.push(String::from("four"));
+            lines.push(String::from("five"));
+            let amended = process_lines(lines.clone(), &mut config);
+            assert_eq!(
+                amended,
+                vec!["00one00", "00two00", "three00", "0four00", "0five00"]
+            );
+        }
     }
 }

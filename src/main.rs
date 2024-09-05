@@ -2,7 +2,7 @@ use crate::config::*;
 use crate::input::*;
 use crate::lpad::*;
 use crate::output::*;
-// use crate::rpad::*;
+use crate::rpad::*;
 use std::env;
 use std::io;
 // use std::result;
@@ -39,6 +39,6 @@ fn main() {
     // the result to the console
     while let Ok(to_process) = receiver.recv() {
         let foo = vec![to_process];
-        let _padded = process_lines(foo);
+        let _padded = process_lines(foo.clone(), &mut config);
     }
 }

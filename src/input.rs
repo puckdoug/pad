@@ -1,5 +1,6 @@
 use std::collections::VecDeque;
 // use std::ffi::OsStr;
+use std::io::prelude::*;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
 
@@ -18,8 +19,7 @@ pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
 
     // binary named lpad or --left means pad the left side
     // binary named rpad or --right means pad th right side
-    // binary just named pad will only work with --left or --right
-
+    // binary just named pad with no args will default to left
     match bin_name {
         "rpad" => config.right = true,
         "lpad" => config.left = true, // drop if this is truly redunant
@@ -38,24 +38,22 @@ pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
     }
 }
 
-pub fn read_stdin(input: Stdin) {
-    if input.is_terminal() {
-        // No input available
-        println!("No input available");
-    } else {
+pub fn read_stdin(input: Stdin) -> Vec<String> {
+    let mut lines = Vec::new();
+
+    if !input.is_terminal() {
         // Input available
-        println!("Input available");
+        for line in input.lock().lines() {
+            match line {
+                Ok(line) => lines.push(line),
+                Err(e) => println!("Error reading line: {}", e),
+            }
+        }
     }
-    println!("read_stdin");
+
+    lines
 }
 
-pub fn read_input_lines() -> String {
-    // read lines from stdin
-    // send lines to the processing thread
-    let mut rec = String::new();
-    rec.push_str("placeholder");
-    rec
-}
 //------------------------------------------------------------------------------
 // Unit Tests
 //------------------------------------------------------------------------------
@@ -121,24 +119,4 @@ mod command_line {
             assert_eq!(config.left, true);
         }
     }
-
-    mod advanced {
-        #[test]
-        #[ignore = "not yet implemented"]
-        fn with_no_arguments_lpad_to_width_of_largest_word() {
-            assert_eq!(1, 1);
-        }
-
-        #[test]
-        #[ignore = "not yet implemented"]
-        fn rpad_with_no_args_pad_right_to_width_of_largest_word() {
-            assert_eq!(1, 1);
-        }
-    }
-
-    // #[test]
-    // #[should_panic(expected = "values don't match")]
-    // fn panic_example() {
-    //     assert_eq!(1, 2, "values don't match");
-    // }
 }

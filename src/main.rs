@@ -25,20 +25,22 @@ fn main() {
     parse_command_line(args, &mut config);
 
     // read stdin if there is data to be consumed
-    read_stdin(io::stdin());
+    let words = read_stdin(io::stdin());
+    println!("{:?}", words);
 
     // create sending and receiving ends of the channel
     let (sender, receiver) = channel();
 
     // start a thread reading input lines
     thread::spawn(move || {
-        sender.send(read_input_lines()).unwrap();
+        sender.send(read_stdin(io::stdin())).unwrap();
     });
 
     // start a thread consuming and processing lines, which ouputs
     // the result to the console
     while let Ok(to_process) = receiver.recv() {
-        let foo = vec![to_process];
+        // let foo = vec![to_process];
+        let foo = to_process;
         let _padded = process_lines(foo.clone(), &mut config);
     }
 }

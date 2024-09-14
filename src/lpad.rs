@@ -3,9 +3,10 @@ pub fn lpad(word: &String, config: &crate::Config) -> String {
     let mut pad_str = String::new();
     // as long as the padding is more than the word length, pad
     if config.llen > word.chars().count() {
-        pad_str = std::iter::repeat(config.lpad.clone())
-            .take(config.llen - word.chars().count())
-            .collect::<String>();
+        pad_str = config
+            .lpad
+            .clone()
+            .repeat(config.llen - word.chars().count());
     }
     pad_str.push_str(&word);
     pad_str

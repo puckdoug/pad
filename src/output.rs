@@ -15,14 +15,14 @@ pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<
         if config.llen == 0 {
             config.llen = max_word_length(&lines);
         }
-        lines = crate::lpad_word_list(&lines, &config);
+        lines = crate::lpad_word_list(&lines, config);
     }
 
     if config.right {
         if config.rlen == 0 {
             config.rlen = max_word_length(&lines);
         }
-        lines = crate::rpad_word_list(&lines, &config)
+        lines = crate::rpad_word_list(&lines, config)
     }
 
     lines

@@ -16,7 +16,7 @@ pub fn rpad(word: &String, config: &crate::Config) -> String {
 pub fn rpad_word_list(words: &Vec<String>, config: &crate::Config) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
-        padded.push(rpad(&word, &config));
+        padded.push(rpad(word, config));
     }
     padded
 }

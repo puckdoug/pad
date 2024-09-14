@@ -8,14 +8,14 @@ pub fn lpad(word: &String, config: &crate::Config) -> String {
             .clone()
             .repeat(config.llen - word.chars().count());
     }
-    pad_str.push_str(&word);
+    pad_str.push_str(word);
     pad_str
 }
 
 pub fn lpad_word_list(words: &Vec<String>, config: &crate::Config) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
-        padded.push(lpad(&word, &config));
+        padded.push(lpad(word, config));
     }
     padded
 }

@@ -66,28 +66,28 @@ mod command_line {
         fn left_true_when_named_lpad() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("path/to/lpad")], &mut config);
-            assert_eq!(config.left, true);
+            assert!(config.left);
         }
 
         #[test]
         fn right_true_when_named_rpad() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./rpad")], &mut config);
-            assert_eq!(config.right, true);
+            assert!(config.right);
         }
 
         #[test]
         fn left_true_when_other_name() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./pad")], &mut config);
-            assert_eq!(config.left, true);
+            assert!(config.left);
         }
 
         #[test]
         fn right_false_when_other_name() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./foo")], &mut config);
-            assert_eq!(config.right, false);
+            assert!(!config.right);
         }
 
         #[test]
@@ -101,22 +101,22 @@ mod command_line {
                 ],
                 &mut config,
             );
-            assert_eq!(config.right, true);
-            assert_eq!(config.left, true);
+            assert!(config.right);
+            assert!(config.left);
         }
 
         #[test]
         fn r_is_ok_for_right() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./pad"), String::from("-r")], &mut config);
-            assert_eq!(config.right, true);
+            assert!(config.right);
         }
 
         #[test]
         fn l_is_ok_for_left() {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./pad"), String::from("-l")], &mut config);
-            assert_eq!(config.left, true);
+            assert!(config.left);
         }
     }
 }

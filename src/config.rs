@@ -13,6 +13,12 @@ pub struct Config {
     pub approach: Approach,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Config::new()
+    }
+}
+
 impl Config {
     pub fn new() -> Config {
         Config {

@@ -1,4 +1,4 @@
-pub fn rpad(word: &String, config: &crate::Config) -> String {
+pub fn rpad(word: &str, config: &crate::Config) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
     // as long as the padding is more than the word length, pad

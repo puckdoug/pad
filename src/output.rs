@@ -11,14 +11,14 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
 }
 
 pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
-    if config.left == true {
+    if config.left {
         if config.llen == 0 {
             config.llen = max_word_length(&lines);
         }
         lines = crate::lpad_word_list(&lines, &config);
     }
 
-    if config.right == true {
+    if config.right {
         if config.rlen == 0 {
             config.rlen = max_word_length(&lines);
         }

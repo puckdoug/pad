@@ -21,26 +21,23 @@ fn main() {
     let args: Vec<String> = env::args().collect(); // todo - don't collect, pass the iterator
     let mut config = Config::new();
 
-    // parse the arguments from the command line
+    // parse the arguments from the command line. Set the configuration based on inputs.
     parse_command_line(args, &mut config);
 
-    // read stdin if there is data to be consumed
-    let words = read_stdin(io::stdin());
-    println!("{:?}", words);
-
-    // create sending and receiving ends of the channel
+    // create sending and receiving ends of the channel for passing words to pad
     let (sender, receiver) = channel();
 
-    // start a thread reading input lines
+    // start a thread and pass words for padding
     thread::spawn(move || {
         sender.send(read_stdin(io::stdin())).unwrap();
     });
 
-    // start a thread consuming and processing lines, which ouputs
+    // start a thread consuming and padding words, which ouputs
     // the result to the console
     while let Ok(to_process) = receiver.recv() {
-        // let foo = vec![to_process];
-        let foo = to_process;
-        let _padded = process_lines(foo.clone(), &mut config);
+        let padded = process_lines(to_process.clone(), &mut config);
+        for word in padded {
+            println!("{word}");
+        }
     }
 }

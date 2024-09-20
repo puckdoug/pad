@@ -1,43 +1,74 @@
 use std::collections::VecDeque;
 // use std::ffi::OsStr;
+// use std::io;
 use std::io::prelude::*;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
 
+fn usage() {
+    println!("Usage: pad|lpad|rpad <width> <pad-char> [options] [tokens] [ < input ]");
+    println!("Options:");
+    println!("  -l, --left  <width> <pad-char>  Pad the left side");
+    println!("  -r, --right <width> <pad-char>  Pad the right side");
+    println!("  -h, --help                      Display this help message");
+}
+
 pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
-    // parse the command line arguments
-    //
-    // position 1 or --len, --llen or --rlen
-    // position 2 or --pad, --lpad or --rpad
-    // --left or if command is named lpad
-    // --right or if command is named rpad
-    // --word to pad every single word, keeping line order
-    // --line to pad every line (default)
-    // all other args are tokens to be padded
     let path = Path::new(&args[0]);
     let bin_name = path.file_stem().unwrap().to_str().unwrap();
-
-    // binary named lpad or --left means pad the left side
-    // binary named rpad or --right means pad th right side
-    // binary just named pad with no args will default to left
     match bin_name {
         "rpad" => config.right = true,
-        "lpad" => config.left = true, // drop if this is truly redunant
         _ => config.left = true,
     }
 
-    // skip command name (args[0]) and process everything else
+    if args.is_empty() {
+        // Default configuration when no arguments are provided
+        return;
+    }
+
     let mut arglist = VecDeque::from(args);
-    let _cmd = arglist.pop_front(); // skip the command name
+    let _cmd = arglist.pop_front().unwrap(); // skip the command name
+
     while let Some(arg) = arglist.pop_front() {
         match arg.as_str() {
-            "--left" | "-l" => config.left = true,
-            "--right" | "-r" => config.right = true,
-            _ => (),
+            "--left" | "-l" => {
+                config.left = true;
+                if let Some(width) = arglist.pop_front() {
+                    if let Ok(width_num) = width.parse::<usize>() {
+                        config.llen = width_num;
+                        config.lpad = match arglist.pop_front() {
+                            Some(pad_char) => pad_char,
+                            None => String::from(" "),
+                        };
+                    }
+                }
+            }
+            "--right" | "-r" => {
+                config.right = true;
+                if let Some(width) = arglist.pop_front() {
+                    if let Ok(width_num) = width.parse::<usize>() {
+                        config.rlen = width_num;
+                        config.rpad = match arglist.pop_front() {
+                            Some(pad_char) => pad_char,
+                            None => String::from(" "),
+                        };
+                    }
+                }
+            }
+            "--help" | "-h" => {
+                usage();
+                std::process::exit(0);
+            }
+            _ => {
+                eprintln!("Unknown argument: {}", arg);
+                usage();
+                std::process::exit(1);
+            }
         }
     }
 }
 
+// todo - make this return word at a time instead of all at once
 pub fn read_stdin(input: Stdin) -> Vec<String> {
     let mut lines = Vec::new();
 
@@ -97,7 +128,11 @@ mod command_line {
                 vec![
                     String::from("pad"),
                     String::from("--left"),
+                    String::from("5"),
+                    String::from("x"),
                     String::from("--right"),
+                    String::from("10"),
+                    String::from("y"),
                 ],
                 &mut config,
             );

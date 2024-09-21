@@ -3,21 +3,3 @@ name = "pad"
 version = "0.1.0"
 edition = "2021"
 default-run = "pad"
-
-[[bin]]
-name = "pad"
-path = "src/main.rs"
-test = true
-bench = true
-
-[[bin]]
-name = "lpad"
-path = "src/main.rs"
-test = true
-bench = false
-
-[[bin]]
-name = "rpad"
-path = "src/main.rs"
-test = true
-bench = false

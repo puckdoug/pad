@@ -1,70 +1,83 @@
-use std::collections::VecDeque;
 // use std::ffi::OsStr;
-// use std::io;
 use std::io::prelude::*;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
 
-fn usage() {
-    println!("Usage: pad|lpad|rpad <width> <pad-char> [options] [tokens] [ < input ]");
+#[derive(PartialEq)]
+enum LR {
+    Left,
+    Right,
+    None,
+}
+
+pub fn usage() {
+    println!("Usage: pad|lpad|rpad [ <width> [ <pad-str> ] ] [options] [tokens] [ < input ]");
     println!("Options:");
-    println!("  -l, --left  <width> <pad-char>  Pad the left side");
-    println!("  -r, --right <width> <pad-char>  Pad the right side");
-    println!("  -h, --help                      Display this help message");
+    println!("  -l, --left  [ <width> [ <pad-str> ] ]  Pad the left side");
+    println!("  -r, --right [ <width> [ <pad-str> ] ]  Pad the right side");
+    println!("  -h, --help                              Display this help message");
 }
 
 pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config) {
-    let path = Path::new(&args[0]);
-    let bin_name = path.file_stem().unwrap().to_str().unwrap();
-    match bin_name {
-        "rpad" => config.right = true,
-        _ => config.left = true,
-    }
-
-    if args.is_empty() {
-        // Default configuration when no arguments are provided
-        return;
-    }
-
-    let mut arglist = VecDeque::from(args);
-    let _cmd = arglist.pop_front().unwrap(); // skip the command name
-
-    while let Some(arg) = arglist.pop_front() {
+    let mut first = true;
+    let mut lr1 = LR::None;
+    let mut lr2 = LR::None;
+    for arg in args.iter() {
+        // only the first argument is possible to be the command-name
+        if first {
+            first = false;
+            let path = Path::new(arg);
+            let bin_name = path.file_stem().unwrap().to_str().unwrap();
+            match bin_name {
+                "rpad" => {
+                    config.right = true;
+                    lr1 = LR::Right;
+                }
+                "lpad" => {
+                    config.left = true;
+                    lr1 = LR::Left;
+                }
+                _ => (),
+            }
+        }
+        println!("{arg}");
         match arg.as_str() {
+            "--help" | "-h" => config.help = true,
             "--left" | "-l" => {
                 config.left = true;
-                if let Some(width) = arglist.pop_front() {
-                    if let Ok(width_num) = width.parse::<usize>() {
-                        config.llen = width_num;
-                        config.lpad = match arglist.pop_front() {
-                            Some(pad_char) => pad_char,
-                            None => String::from(" "),
-                        };
-                    }
-                }
+                lr1 = LR::Left;
             }
             "--right" | "-r" => {
                 config.right = true;
-                if let Some(width) = arglist.pop_front() {
-                    if let Ok(width_num) = width.parse::<usize>() {
-                        config.rlen = width_num;
-                        config.rpad = match arglist.pop_front() {
-                            Some(pad_char) => pad_char,
-                            None => String::from(" "),
-                        };
-                    }
-                }
-            }
-            "--help" | "-h" => {
-                usage();
-                std::process::exit(0);
+                lr1 = LR::Right;
             }
             _ => {
-                eprintln!("Unknown argument: {}", arg);
-                usage();
-                std::process::exit(1);
+                if lr1 == LR::Right {
+                    if let Ok(width_num) = arg.parse::<usize>() {
+                        config.rlen = width_num;
+                        lr1 = LR::None;
+                        lr2 = LR::Right;
+                    }
+                } else if lr1 == LR::Left {
+                    if let Ok(width_num) = arg.parse::<usize>() {
+                        config.llen = width_num;
+                        lr1 = LR::None;
+                        lr2 = LR::Left;
+                    }
+                } else if lr2 == LR::Right {
+                    config.rpad = arg.clone();
+                    lr2 = LR::None;
+                } else if lr2 == LR::Left {
+                    config.lpad = arg.clone();
+                    lr2 = LR::None;
+                }
             }
         }
+    }
+
+    if !config.left && !config.right {
+        // Default configuration when no arguments are provided
+        config.left = true;
     }
 }
 
@@ -152,6 +165,18 @@ mod command_line {
             let mut config = crate::Config::new();
             crate::parse_command_line(vec![String::from("./pad"), String::from("-l")], &mut config);
             assert!(config.left);
+        }
+
+        #[test]
+        fn no_option_but_args() {
+            let mut config = crate::Config::new();
+            crate::parse_command_line(
+                vec![String::from("lpad"), String::from("5"), String::from("x")],
+                &mut config,
+            );
+            assert!(config.left);
+            assert_eq!(config.llen, 5);
+            assert_eq!(config.lpad, "x");
         }
     }
 }

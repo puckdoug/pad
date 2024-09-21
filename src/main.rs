@@ -23,6 +23,10 @@ fn main() {
 
     // parse the arguments from the command line. Set the configuration based on inputs.
     parse_command_line(args, &mut config);
+    if config.help {
+        usage();
+        std::process::exit(0);
+    }
 
     // create sending and receiving ends of the channel for passing words to pad
     let (sender, receiver) = channel();

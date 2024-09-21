@@ -1,16 +1,13 @@
-pub enum Approach {
-    Line,
-    Word,
-}
+pub const DEFAULT_PAD: &'static str = "0";
 
 pub struct Config {
+    pub help: bool,
     pub left: bool,
     pub lpad: String,
     pub llen: usize,
     pub right: bool,
     pub rpad: String,
     pub rlen: usize,
-    pub approach: Approach,
 }
 
 impl Default for Config {
@@ -22,13 +19,13 @@ impl Default for Config {
 impl Config {
     pub fn new() -> Config {
         Config {
+            help: false,
             left: false,
-            lpad: String::from("0"),
+            lpad: DEFAULT_PAD.to_string(),
             llen: 0,
             right: false,
-            rpad: String::from("0"),
+            rpad: DEFAULT_PAD.to_string(),
             rlen: 0,
-            approach: Approach::Line,
         }
     }
 }

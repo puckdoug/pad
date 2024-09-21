@@ -20,9 +20,10 @@ fn main() {
     // let args: Vec<ArgsOs> = env::args_os().collect();
     let args: Vec<String> = env::args().collect(); // todo - don't collect, pass the iterator
     let mut config = Config::new();
+    let mut words: Vec<String> = Vec::new();
 
     // parse the arguments from the command line. Set the configuration based on inputs.
-    parse_command_line(args, &mut config);
+    parse_command_line(args, &mut config, &mut words);
     if config.help {
         usage();
         std::process::exit(0);
@@ -33,6 +34,7 @@ fn main() {
 
     // start a thread and pass words for padding
     thread::spawn(move || {
+        sender.send(words).unwrap();
         sender.send(read_stdin(io::stdin())).unwrap();
     });
 

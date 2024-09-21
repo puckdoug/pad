@@ -22,3 +22,9 @@ release: target/release/pad
 
 clean:
 	cargo clean
+
+test:
+	cargo test
+
+cov:
+	cargo tarpaulin

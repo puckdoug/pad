@@ -60,17 +60,19 @@ pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config, words: 
                 if lr1 == LR::Right {
                     if let Ok(width_num) = arg.parse::<usize>() {
                         config.rlen = width_num;
-                        lr1 = LR::None;
                         lr2 = LR::Right;
-                        continue;
+                    } else {
+                        words.push(arg.clone());
                     }
+                    lr1 = LR::None;
                 } else if lr1 == LR::Left {
                     if let Ok(width_num) = arg.parse::<usize>() {
                         config.llen = width_num;
-                        lr1 = LR::None;
                         lr2 = LR::Left;
-                        continue;
+                    } else {
+                        words.push(arg.clone());
                     }
+                    lr1 = LR::None;
                 } else if lr2 == LR::Right {
                     config.rpad = arg.clone();
                     lr2 = LR::None;
@@ -113,151 +115,166 @@ pub fn read_stdin(input: Stdin) -> Vec<String> {
 // Unit Tests
 //------------------------------------------------------------------------------
 #[cfg(test)]
-mod command_line {
+#[test]
+fn left_true_when_named_lpad() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(vec![String::from("path/to/lpad")], &mut config, &mut words);
+    assert!(config.left);
+}
 
-    mod basic {
+#[test]
+fn right_true_when_named_rpad() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(vec![String::from("./rpad")], &mut config, &mut words);
+    assert!(config.right);
+}
 
-        #[test]
-        fn left_true_when_named_lpad() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(vec![String::from("path/to/lpad")], &mut config, &mut words);
-            assert!(config.left);
-        }
+#[test]
+fn left_true_when_other_name() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(vec![String::from("./pad")], &mut config, &mut words);
+    assert!(config.left);
+}
 
-        #[test]
-        fn right_true_when_named_rpad() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(vec![String::from("./rpad")], &mut config, &mut words);
-            assert!(config.right);
-        }
+#[test]
+fn left_true_right_false_when_other_name() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(vec![String::from("./foo")], &mut config, &mut words);
+    assert!(!config.right);
+    assert!(config.left);
+}
 
-        #[test]
-        fn left_true_when_other_name() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(vec![String::from("./pad")], &mut config, &mut words);
-            assert!(config.left);
-        }
+#[test]
+fn lpad_with_tokens_only_pads_default() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![
+            String::from("lpad"),
+            String::from("f"),
+            String::from("fo"),
+            String::from("foo"),
+        ],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.left);
+    assert_eq!(config.llen, 0);
+    assert_eq!(config.lpad, "0");
+    assert_eq!(words.len(), 3);
+}
 
-        #[test]
-        fn right_false_when_other_name() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(vec![String::from("./foo")], &mut config, &mut words);
-            assert!(!config.right);
-        }
+#[test]
+fn left_and_right_together_are_ok() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![
+            String::from("pad"),
+            String::from("--left"),
+            String::from("5"),
+            String::from("x"),
+            String::from("--right"),
+            String::from("10"),
+            String::from("y"),
+        ],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.right);
+    assert_eq!(config.rlen, 10);
+    assert_eq!(config.rpad, "y");
+    assert!(config.left);
+    assert_eq!(config.llen, 5);
+    assert_eq!(config.lpad, "x");
+}
 
-        #[test]
-        fn left_and_right_together_are_ok() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![
-                    String::from("pad"),
-                    String::from("--left"),
-                    String::from("5"),
-                    String::from("x"),
-                    String::from("--right"),
-                    String::from("10"),
-                    String::from("y"),
-                ],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.right);
-            assert_eq!(config.rlen, 10);
-            assert_eq!(config.rpad, "y");
-            assert!(config.left);
-            assert_eq!(config.llen, 5);
-            assert_eq!(config.lpad, "x");
-        }
+#[test]
+fn left_and_right_together_are_ok_with_rpad_bi_with_rpad_bin() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![
+            String::from("rpad"),
+            String::from("10"),
+            String::from("y"),
+            String::from("--left"),
+            String::from("5"),
+            String::from("x"),
+        ],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.right);
+    assert_eq!(config.rlen, 10);
+    assert_eq!(config.rpad, "y");
+    assert!(config.left);
+    assert_eq!(config.llen, 5);
+    assert_eq!(config.lpad, "x");
+}
 
-        #[test]
-        fn left_and_right_together_are_ok_with_rpad_bin() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![
-                    String::from("rpad"),
-                    String::from("10"),
-                    String::from("y"),
-                    String::from("--left"),
-                    String::from("5"),
-                    String::from("x"),
-                ],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.right);
-            assert_eq!(config.rlen, 10);
-            assert_eq!(config.rpad, "y");
-            assert!(config.left);
-            assert_eq!(config.llen, 5);
-            assert_eq!(config.lpad, "x");
-        }
+#[test]
+fn left_and_right_together_are_ok_with_lpad_bin() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![
+            String::from("lpad"),
+            String::from("5"),
+            String::from("x"),
+            String::from("--right"),
+            String::from("10"),
+            String::from("y"),
+        ],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.right);
+    assert_eq!(config.rlen, 10);
+    assert_eq!(config.rpad, "y");
+    assert!(config.left);
+    assert_eq!(config.llen, 5);
+    assert_eq!(config.lpad, "x");
+}
 
-        #[test]
-        fn left_and_right_together_are_ok_with_lpad_bin() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![
-                    String::from("lpad"),
-                    String::from("5"),
-                    String::from("x"),
-                    String::from("--right"),
-                    String::from("10"),
-                    String::from("y"),
-                ],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.right);
-            assert_eq!(config.rlen, 10);
-            assert_eq!(config.rpad, "y");
-            assert!(config.left);
-            assert_eq!(config.llen, 5);
-            assert_eq!(config.lpad, "x");
-        }
+#[test]
+fn r_is_ok_for_right() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![String::from("./pad"), String::from("-r")],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.right);
+}
 
-        #[test]
-        fn r_is_ok_for_right() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![String::from("./pad"), String::from("-r")],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.right);
-        }
+#[test]
+fn l_is_ok_for_left() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![String::from("./pad"), String::from("-l")],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.left);
+}
 
-        #[test]
-        fn l_is_ok_for_left() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![String::from("./pad"), String::from("-l")],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.left);
-        }
-
-        #[test]
-        fn no_option_but_args() {
-            let mut config = crate::Config::new();
-            let mut words: Vec<String> = Vec::new();
-            crate::parse_command_line(
-                vec![String::from("lpad"), String::from("5"), String::from("x")],
-                &mut config,
-                &mut words,
-            );
-            assert!(config.left);
-            assert_eq!(config.llen, 5);
-            assert_eq!(config.lpad, "x");
-        }
-    }
+#[test]
+fn no_option_but_args() {
+    let mut config = crate::Config::new();
+    let mut words: Vec<String> = Vec::new();
+    crate::parse_command_line(
+        vec![String::from("lpad"), String::from("5"), String::from("x")],
+        &mut config,
+        &mut words,
+    );
+    assert!(config.left);
+    assert_eq!(config.llen, 5);
+    assert_eq!(config.lpad, "x");
 }

@@ -105,3 +105,30 @@ abcabcabcabcabcwords
 abcabcabcabcabcabcabcabcto
 abcabcabcabcabcabcabcpad
 ```
+
+# Installing
+
+At the moment, this is only distributed as source from here. I'll work on packaging it for varaious distributions: homebrew, .deb, .rpm, .apk, etc.
+
+For now, to install, clone the repository and build it. You'll need rust and cargo installed, which you can get from [rustup](https://rustup.rs/) or your own preferred package manager. Assuming you have both installed and in your path, you can install with the following commands:
+
+```shell
+$ git clone https://github.com/puckdoug/pad.git
+$ cd pad
+$ make intsall
+```
+
+This will place the pad binary in your cargo bin directory (typically ${HOME}/.cargo/bin). A full install will link pad to lpad and rpad. Cargo doesn't support doing this and can't clean up afterwards if you do it manually.
+
+The target would be to deploy wiht the appropriate package manager for the relevant platform.
+
+# Todo
+
+- [ ] Implement line-by-line processing for arbitrary file sizes
+- [ ] Homebrew packaging for MacOS
+- [ ] .deb packaging for Debian-based systems
+- [ ] .rpm packaging for RedHat-based systems
+- [ ] .apk packaging for Alpine-based systems
+- [ ] .tgz for Slackware-based systems
+- [ ] FreeBSD, NetBSD, OpenBSD Ports (or packages)
+- [ ] .exe packaging for Windows

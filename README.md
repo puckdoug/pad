@@ -72,7 +72,8 @@ xxxxxxxxto
 xxxxxxxpad
 
 # and for completeness
-$ rpad 10 x these are a few words to padothesexxxxx
+$ rpad 10 x these are a few words to pad
+thesexxxxx
 arexxxxxxx
 axxxxxxxxx
 fewxxxxxxx

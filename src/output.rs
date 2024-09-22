@@ -1,3 +1,5 @@
+use crate::LR;
+
 /// Check the maximum width of all words provided in the list. This is needed
 /// in the default case when no width is provided. The program then assumes it
 /// should pad to the width of the widest word. The negative in this case is
@@ -20,14 +22,14 @@ pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<
         if config.llen == 0 {
             config.llen = max_word_length(&lines);
         }
-        lines = crate::lpad_word_list(&lines, config);
+        lines = crate::pad_word_list(&lines, config, LR::Left);
     }
 
     if config.right {
         if config.rlen == 0 {
             config.rlen = max_word_length(&lines);
         }
-        lines = crate::rpad_word_list(&lines, config)
+        lines = crate::pad_word_list(&lines, config, LR::Right);
     }
 
     lines

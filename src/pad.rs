@@ -1,3 +1,17 @@
+use crate::LR;
+
+pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec<String> {
+    let mut padded = Vec::new();
+    for word in words {
+        if lr == LR::Left {
+            padded.push(lpad(word, config));
+        } else {
+            padded.push(rpad(word, config));
+        }
+    }
+    padded
+}
+
 pub fn lpad(word: &str, config: &crate::Config) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
@@ -10,14 +24,6 @@ pub fn lpad(word: &str, config: &crate::Config) -> String {
     }
     pad_str.push_str(word);
     pad_str
-}
-
-pub fn lpad_word_list(words: &Vec<String>, config: &crate::Config) -> Vec<String> {
-    let mut padded = Vec::new();
-    for word in words {
-        padded.push(lpad(word, config));
-    }
-    padded
 }
 
 pub fn rpad(word: &str, config: &crate::Config) -> String {
@@ -33,14 +39,6 @@ pub fn rpad(word: &str, config: &crate::Config) -> String {
     let mut rpadded = String::from(word);
     rpadded.push_str(&pad_str);
     rpadded
-}
-
-pub fn rpad_word_list(words: &Vec<String>, config: &crate::Config) -> Vec<String> {
-    let mut padded = Vec::new();
-    for word in words {
-        padded.push(rpad(word, config));
-    }
-    padded
 }
 
 //------------------------------------------------------------------------------
@@ -100,6 +98,8 @@ mod lpad {
     }
 
     mod word_list {
+        use crate::LR;
+
         #[test]
         fn five_words() {
             let mut words = Vec::new();
@@ -110,7 +110,7 @@ mod lpad {
             words.push(String::from("five"));
             let mut config = crate::Config::new();
             config.llen = 5;
-            let padded = crate::lpad_word_list(&words, &config);
+            let padded = crate::pad_word_list(&words, &config, LR::Left);
             assert_eq!(padded[0], "00one");
             assert_eq!(padded[1], "00two");
             assert_eq!(padded[2], "three");
@@ -128,7 +128,7 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 5;
             config.lpad = String::from(" ");
-            let padded = crate::lpad_word_list(&words, &config);
+            let padded = crate::pad_word_list(&words, &config, LR::Left);
             assert_eq!(padded[0], "  one");
             assert_eq!(padded[1], "  two");
             assert_eq!(padded[2], "three");
@@ -192,6 +192,8 @@ mod rpad {
     }
 
     mod word_list {
+        use crate::LR;
+
         #[test]
         fn five_words() {
             let mut words = Vec::new();
@@ -202,7 +204,7 @@ mod rpad {
             words.push(String::from("five"));
             let mut config = crate::Config::new();
             config.rlen = 5;
-            let padded = crate::rpad_word_list(&words, &config);
+            let padded = crate::pad_word_list(&words, &config, LR::Right);
             assert_eq!(padded[0], "one00");
             assert_eq!(padded[1], "two00");
             assert_eq!(padded[2], "three");
@@ -220,7 +222,7 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 5;
             config.rpad = String::from(" ");
-            let padded = crate::rpad_word_list(&words, &config);
+            let padded = crate::pad_word_list(&words, &config, LR::Right);
             assert_eq!(padded[0], "one  ");
             assert_eq!(padded[1], "two  ");
             assert_eq!(padded[2], "three");

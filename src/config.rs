@@ -4,6 +4,7 @@ use crate::DEFAULT_PAD;
 /// options which define how words will be padded on output. Defaults are
 /// set in the base implementation, which are then overridden by command-line
 /// options at runtime.
+#[derive(Debug)]
 pub struct Config {
     pub help: bool,
     pub left: bool,

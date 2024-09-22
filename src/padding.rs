@@ -1,5 +1,8 @@
 use crate::LR;
 
+/// Pad a complete list of words. This is typically needed in case hte width
+/// in not known so that the complete list may be scanned to identify the
+/// maximum width word. However, it may be used for convenience.
 pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
@@ -8,6 +11,13 @@ pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec
     padded
 }
 
+/// The pad function that does the real work. This operates per-word. Once
+/// The Config is set, each word passed in will be returned padded according
+/// to that configuration. This expects as arguments:
+/// - word: &str - the word to be padded
+/// - config: &crate::Config - the configuration
+/// - lr: &LR - the direction to pad (Left or Right). Passing None will return
+///   the word unchanged.
 pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
@@ -23,7 +33,7 @@ pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
         }
         pad_str.push_str(word);
         padded = pad_str;
-    } else {
+    } else if *lr == LR::Right {
         // as long as the padding is more than the word length, pad
         if config.rlen > word.chars().count() {
             pad_str = config
@@ -33,6 +43,8 @@ pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
         }
         padded = String::from(word);
         padded.push_str(&pad_str);
+    } else {
+        padded = String::from(word);
     }
     padded
 }
@@ -214,5 +226,20 @@ mod rpad {
         assert_eq!("three", padded[2]);
         assert_eq!("four ", padded[3]);
         assert_eq!("five ", padded[4]);
+    }
+}
+
+#[cfg(test)]
+mod other {
+    use crate::padding::pad;
+    use crate::LR;
+
+    #[test]
+    fn no_pad_direction_returns_word() {
+        let mut config = crate::Config::new();
+        config.rlen = 5;
+        let word = String::from("one");
+        let padded = pad(&word, &config, &LR::None);
+        assert_eq!("one", padded);
     }
 }

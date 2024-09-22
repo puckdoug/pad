@@ -18,7 +18,7 @@ pub const DEFAULT_PAD: &str = "0";
 
 /// LR is used to flag whether the upcoming arguments apply to left or right
 /// padding or none, in which case they should be treated as tokens to pad.
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LR {
     Left,
     Right,

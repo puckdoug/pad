@@ -16,6 +16,15 @@ pub mod pad;
 /// the default string to use to pad words if none is specified
 pub const DEFAULT_PAD: &str = "0";
 
+/// LR is used to flag whether the upcoming arguments apply to left or right
+/// padding or none, in which case they should be treated as tokens to pad.
+#[derive(PartialEq)]
+pub enum LR {
+    Left,
+    Right,
+    None,
+}
+
 fn main() {
     // gather the command-line arguments
     // let args: Vec<ArgsOs> = env::args_os().collect();

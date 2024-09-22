@@ -1,16 +1,8 @@
 // use std::ffi::OsStr;
+use crate::LR;
 use std::io::prelude::*;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
-
-/// LR is used to flag whether the upcoming arguments apply to left or right
-/// padding or none, in which case they should be treated as tokens to pad.
-#[derive(PartialEq)]
-enum LR {
-    Left,
-    Right,
-    None,
-}
 
 /// Usage prints the help message to the console. The program should exit after doing so.
 pub fn usage() {

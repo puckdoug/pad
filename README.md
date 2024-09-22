@@ -81,3 +81,27 @@ wordsxxxxx
 toxxxxxxxx
 padxxxxxxx
 ```
+
+Multibyte characters are supported, but font widths mean that this doesn't appear correct visually, at least on my screen. There may be a fixed width unicode font where this outputs strictly in columns, though I expect the latin characters would seem quite spread in that case.
+
+At the moment, multiple characters is not. Or more precisely, it does something, but it's probably not what you want. Fixing this is planned.
+
+```shell
+$ lpad 10 ウ these are a few words to pad
+ウウウウウthese
+ウウウウウウウare
+ウウウウウウウウウa
+ウウウウウウウfew
+ウウウウウwords
+ウウウウウウウウto
+ウウウウウウウpad
+
+$ lpad 10 abc these are a few words to pad
+abcabcabcabcabcthese
+abcabcabcabcabcabcabcare
+abcabcabcabcabcabcabcabcabca
+abcabcabcabcabcabcabcfew
+abcabcabcabcabcwords
+abcabcabcabcabcabcabcabcto
+abcabcabcabcabcabcabcpad
+```

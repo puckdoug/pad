@@ -7,11 +7,11 @@ stdin and pads them with the padding specified (default 0) on left or right.
 With no arguments, it will pad to the width of the longest word. However, this
 requires that the entire input file be read into memory so it can be processed.
 To handle files more efficiently, if width is specified the input will be
-processed line-by-line, allowing for arbitrarily large files to be processed.
+processed line-by-line, allowing for arbitrarily large files to be processed (not yet implemented).
 
 ## Usage
 
-The output om the command line:
+The help output on the command line:
 
 ```shell
 Usage: pad|lpad|rpad [ <width> [ <pad-str> ] ] [options] [tokens] [ < input ]
@@ -61,6 +61,7 @@ these
 words
 000to
 00pad
+
 $ lpad 10 x these are a few words to pad
 xxxxxthese
 xxxxxxxare
@@ -69,4 +70,13 @@ xxxxxxxfew
 xxxxxwords
 xxxxxxxxto
 xxxxxxxpad
+
+# and for completeness
+$ rpad 10 x these are a few words to padothesexxxxx
+arexxxxxxx
+axxxxxxxxx
+fewxxxxxxx
+wordsxxxxx
+toxxxxxxxx
+padxxxxxxx
 ```

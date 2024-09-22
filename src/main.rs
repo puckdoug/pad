@@ -1,8 +1,7 @@
 use crate::config::*;
 use crate::input::*;
-use crate::lpad::*;
 use crate::output::*;
-use crate::rpad::*;
+use crate::pad::*;
 use std::env;
 use std::io;
 // use std::result;
@@ -11,9 +10,8 @@ use std::thread;
 
 pub mod config;
 pub mod input;
-pub mod lpad;
 pub mod output;
-pub mod rpad;
+pub mod pad;
 
 /// the default string to use to pad words if none is specified
 pub const DEFAULT_PAD: &str = "0";

@@ -1,5 +1,10 @@
-// When no length is provided, pad to the width of the longest item in the
-// list. For this, need to scan the entire list to find the length.
+/// Check the maximum width of all words provided in the list. This is needed
+/// in the default case when no width is provided. The program then assumes it
+/// should pad to the width of the widest word. The negative in this case is
+/// that it requires the entire set of words to be ingested before padding can
+/// begin. This limits the size of a file which can be padded to one which can
+/// be held in memory. If a size is provided the padding and ouput is done on
+/// a separate thread running concurrently which can limit memory usage.
 pub fn max_word_length(words: &Vec<String>) -> usize {
     let mut max = 0;
     for word in words {

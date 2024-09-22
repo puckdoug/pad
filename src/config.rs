@@ -1,5 +1,9 @@
-pub const DEFAULT_PAD: &'static str = "0";
+use crate::DEFAULT_PAD;
 
+/// The Config struct is used across main, input, and ouput to store the
+/// options which define how words will be padded on output. Defaults are
+/// set in the base implementation, which are then overridden by command-line
+/// options at runtime.
 pub struct Config {
     pub help: bool,
     pub left: bool,

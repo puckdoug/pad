@@ -3,6 +3,8 @@ use std::io::prelude::*;
 use std::io::{IsTerminal, Stdin};
 use std::path::Path;
 
+/// LR is used to flag whether the upcoming arguments apply to left or right
+/// padding or none, in which case they should be treated as tokens to pad.
 #[derive(PartialEq)]
 enum LR {
     Left,
@@ -10,14 +12,18 @@ enum LR {
     None,
 }
 
+/// Usage prints the help message to the console. The program should exit after doing so.
 pub fn usage() {
     println!("Usage: pad|lpad|rpad [ <width> [ <pad-str> ] ] [options] [tokens] [ < input ]");
     println!("Options:");
     println!("  -l, --left  [ <width> [ <pad-str> ] ]  Pad the left side");
     println!("  -r, --right [ <width> [ <pad-str> ] ]  Pad the right side");
-    println!("  -h, --help                              Display this help message");
+    println!("  -h, --help                             Display this help message");
 }
 
+/// The heavy lifting of setting up the program for padding is done here. This parses all
+/// options from the command-line and determines what padding to do, left, right, or both.
+/// If specified, it also builds a Vec of words to pad.
 pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config, words: &mut Vec<String>) {
     let mut first = true;
     let mut lr1 = LR::None;
@@ -95,6 +101,7 @@ pub fn parse_command_line(args: Vec<String>, config: &mut crate::Config, words: 
 }
 
 // todo - make this return word at a time instead of all at once
+/// read_stdin takes input on stdin and provides all words for padding.
 pub fn read_stdin(input: Stdin) -> Vec<String> {
     let mut lines = Vec::new();
 

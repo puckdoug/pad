@@ -15,6 +15,9 @@ pub mod lpad;
 pub mod output;
 pub mod rpad;
 
+/// the default string to use to pad words if none is specified
+pub const DEFAULT_PAD: &str = "0";
+
 fn main() {
     // gather the command-line arguments
     // let args: Vec<ArgsOs> = env::args_os().collect();

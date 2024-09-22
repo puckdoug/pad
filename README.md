@@ -125,6 +125,7 @@ The target would be to deploy wiht the appropriate package manager for the relev
 # Todo
 
 - [ ] Implement line-by-line processing for arbitrary file sizes
+- [ ] Implement multi-character padding
 - [ ] Homebrew packaging for MacOS
 - [ ] .deb packaging for Debian-based systems
 - [ ] .rpm packaging for RedHat-based systems

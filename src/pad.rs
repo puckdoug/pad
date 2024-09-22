@@ -3,42 +3,38 @@ use crate::LR;
 pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
-        if lr == LR::Left {
-            padded.push(lpad(word, config));
-        } else {
-            padded.push(rpad(word, config));
-        }
+        padded.push(pad(word, config, &lr));
     }
     padded
 }
 
-pub fn lpad(word: &str, config: &crate::Config) -> String {
+pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
-    // as long as the padding is more than the word length, pad
-    if config.llen > word.chars().count() {
-        pad_str = config
-            .lpad
-            .clone()
-            .repeat(config.llen - word.chars().count());
-    }
-    pad_str.push_str(word);
-    pad_str
-}
+    let mut padded;
 
-pub fn rpad(word: &str, config: &crate::Config) -> String {
-    // pad the word to the length of the longest word
-    let mut pad_str = String::new();
-    // as long as the padding is more than the word length, pad
-    if config.rlen > word.chars().count() {
-        pad_str = config
-            .rpad
-            .clone()
-            .repeat(config.rlen - word.chars().count());
+    if *lr == LR::Left {
+        // as long as the padding is more than the word length, pad
+        if config.llen > word.chars().count() {
+            pad_str = config
+                .lpad
+                .clone()
+                .repeat(config.llen - word.chars().count());
+        }
+        pad_str.push_str(word);
+        padded = pad_str;
+    } else {
+        // as long as the padding is more than the word length, pad
+        if config.rlen > word.chars().count() {
+            pad_str = config
+                .rpad
+                .clone()
+                .repeat(config.rlen - word.chars().count());
+        }
+        padded = String::from(word);
+        padded.push_str(&pad_str);
     }
-    let mut rpadded = String::from(word);
-    rpadded.push_str(&pad_str);
-    rpadded
+    padded
 }
 
 //------------------------------------------------------------------------------
@@ -55,8 +51,8 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 5;
             let word = String::from("one");
-            let padded = lpad(&word, &config);
-            assert_eq!(padded, "00one");
+            let padded = pad(&word, &config, &LR::Left);
+            assert_eq!("00one", padded);
         }
 
         #[test]
@@ -65,8 +61,8 @@ mod lpad {
             config.llen = 5;
             config.lpad = String::from(" ");
             let word = String::from("one");
-            let padded = lpad(&word, &config);
-            assert_eq!(padded, "  one");
+            let padded = pad(&word, &config, &LR::Left);
+            assert_eq!("  one", padded);
         }
 
         #[test]
@@ -74,8 +70,8 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 5;
             let word = String::from("longer");
-            let padded = lpad(&word, &config);
-            assert_eq!(padded, "longer");
+            let padded = pad(&word, &config, &LR::Left);
+            assert_eq!("longer", padded);
         }
 
         #[test]
@@ -83,8 +79,8 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 5;
             let word = String::from("equal");
-            let padded = lpad(&word, &config);
-            assert_eq!(padded, "equal");
+            let padded = pad(&word, &config, &LR::Left);
+            assert_eq!("equal", padded);
         }
 
         #[test]
@@ -92,8 +88,8 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 12;
             let word = String::from("ラウトは難しいです！");
-            let padded = lpad(&word, &config);
-            assert_eq!(padded, "00ラウトは難しいです！")
+            let padded = pad(&word, &config, &LR::Left);
+            assert_eq!("00ラウトは難しいです！", padded)
         }
     }
 
@@ -111,11 +107,11 @@ mod lpad {
             let mut config = crate::Config::new();
             config.llen = 5;
             let padded = crate::pad_word_list(&words, &config, LR::Left);
-            assert_eq!(padded[0], "00one");
-            assert_eq!(padded[1], "00two");
-            assert_eq!(padded[2], "three");
-            assert_eq!(padded[3], "0four");
-            assert_eq!(padded[4], "0five");
+            assert_eq!("00one", padded[0]);
+            assert_eq!("00two", padded[1]);
+            assert_eq!("three", padded[2]);
+            assert_eq!("0four", padded[3]);
+            assert_eq!("0five", padded[4]);
         }
         #[test]
         fn five_words_with_space() {
@@ -129,11 +125,11 @@ mod lpad {
             config.llen = 5;
             config.lpad = String::from(" ");
             let padded = crate::pad_word_list(&words, &config, LR::Left);
-            assert_eq!(padded[0], "  one");
-            assert_eq!(padded[1], "  two");
-            assert_eq!(padded[2], "three");
-            assert_eq!(padded[3], " four");
-            assert_eq!(padded[4], " five");
+            assert_eq!("  one", padded[0]);
+            assert_eq!("  two", padded[1]);
+            assert_eq!("three", padded[2]);
+            assert_eq!(" four", padded[3]);
+            assert_eq!(" five", padded[4]);
         }
     }
 }
@@ -149,8 +145,8 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 5;
             let word = String::from("one");
-            let padded = rpad(&word, &config);
-            assert_eq!(padded, "one00");
+            let padded = pad(&word, &config, &LR::Right);
+            assert_eq!("one00", padded);
         }
 
         #[test]
@@ -159,8 +155,8 @@ mod rpad {
             config.rlen = 5;
             config.rpad = String::from(" ");
             let word = String::from("one");
-            let padded = rpad(&word, &config);
-            assert_eq!(padded, "one  ");
+            let padded = pad(&word, &config, &LR::Right);
+            assert_eq!("one  ", padded);
         }
 
         #[test]
@@ -168,8 +164,8 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 5;
             let word = String::from("longer");
-            let padded = rpad(&word, &config);
-            assert_eq!(padded, "longer");
+            let padded = pad(&word, &config, &LR::Right);
+            assert_eq!("longer", padded);
         }
 
         #[test]
@@ -177,8 +173,8 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 5;
             let word = String::from("equal");
-            let padded = rpad(&word, &config);
-            assert_eq!(padded, "equal");
+            let padded = pad(&word, &config, &LR::Right);
+            assert_eq!("equal", padded);
         }
 
         #[test]
@@ -186,8 +182,8 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 12;
             let word = String::from("ラウトは難しいです！");
-            let padded = rpad(&word, &config);
-            assert_eq!(padded, "ラウトは難しいです！00")
+            let padded = pad(&word, &config, &LR::Right);
+            assert_eq!("ラウトは難しいです！00", padded)
         }
     }
 
@@ -205,11 +201,11 @@ mod rpad {
             let mut config = crate::Config::new();
             config.rlen = 5;
             let padded = crate::pad_word_list(&words, &config, LR::Right);
-            assert_eq!(padded[0], "one00");
-            assert_eq!(padded[1], "two00");
-            assert_eq!(padded[2], "three");
-            assert_eq!(padded[3], "four0");
-            assert_eq!(padded[4], "five0");
+            assert_eq!("one00", padded[0]);
+            assert_eq!("two00", padded[1]);
+            assert_eq!("three", padded[2]);
+            assert_eq!("four0", padded[3]);
+            assert_eq!("five0", padded[4]);
         }
         #[test]
         fn five_words_with_space() {
@@ -223,11 +219,11 @@ mod rpad {
             config.rlen = 5;
             config.rpad = String::from(" ");
             let padded = crate::pad_word_list(&words, &config, LR::Right);
-            assert_eq!(padded[0], "one  ");
-            assert_eq!(padded[1], "two  ");
-            assert_eq!(padded[2], "three");
-            assert_eq!(padded[3], "four ");
-            assert_eq!(padded[4], "five ");
+            assert_eq!("one  ", padded[0]);
+            assert_eq!("two  ", padded[1]);
+            assert_eq!("three", padded[2]);
+            assert_eq!("four ", padded[3]);
+            assert_eq!("five ", padded[4]);
         }
     }
 }

@@ -42,7 +42,8 @@ pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
 //------------------------------------------------------------------------------
 #[cfg(test)]
 mod lpad {
-    use crate::pad;
+
+    use crate::padding::pad;
     use crate::LR;
 
     #[test]
@@ -130,7 +131,7 @@ mod lpad {
 #[cfg(test)]
 mod rpad {
 
-    use crate::pad;
+    use crate::padding::pad;
     use crate::LR;
 
     #[test]

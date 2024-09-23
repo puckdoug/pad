@@ -17,18 +17,29 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
     max
 }
 
+/// Process the lines of words provided. At the moment, this expects a single word
+/// per line. I expect this may get adapted to handle multiple words in a line, but
+/// have not yet considered in sufficient detail how that would work. First word, all
+/// words, every second word? More combinations and the real use case for building
+/// this was padding zeros left on a list of numbers. Whther the complex case is even
+/// needed isn't clear.
 pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
-    if config.left {
+    if config.llen == 0 || config.rlen == 0 {
+        let length = max_word_length(&lines);
         if config.llen == 0 {
-            config.llen = max_word_length(&lines);
+            config.llen = length;
         }
+        if config.rlen == 0 {
+            config.rlen = length;
+        }
+    }
+
+    // possible to optimize these two into a single pass?
+    if config.left {
         lines = crate::pad_word_list(&lines, config, LR::Left);
     }
 
     if config.right {
-        if config.rlen == 0 {
-            config.rlen = max_word_length(&lines);
-        }
         lines = crate::pad_word_list(&lines, config, LR::Right);
     }
 

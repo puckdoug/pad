@@ -26,10 +26,10 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
 pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
     if (config.left && config.llen == 0) || (config.right && config.rlen == 0) {
         let length = max_word_length(&lines);
-        if config.llen == 0 {
+        if config.left && config.llen == 0 {
             config.llen = length;
         }
-        if config.rlen == 0 {
+        if config.right && config.rlen == 0 {
             config.rlen = length;
         }
     }

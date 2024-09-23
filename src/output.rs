@@ -24,7 +24,7 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
 /// this was padding zeros left on a list of numbers. Whther the complex case is even
 /// needed isn't clear.
 pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
-    if config.llen == 0 || config.rlen == 0 {
+    if (config.left && config.llen == 0) || (config.right && config.rlen == 0) {
         let length = max_word_length(&lines);
         if config.llen == 0 {
             config.llen = length;

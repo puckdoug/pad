@@ -31,7 +31,7 @@ test:
 cov:
 	cargo tarpaulin
 
-testwatch:
+watch:
 	cargo watch -x test
 
 install: release

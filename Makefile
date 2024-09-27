@@ -42,3 +42,9 @@ doc: $(SRC)
 
 readdoc:
 	cargo doc --open
+
+deb:
+	cargo deb
+
+deb-install:
+	cargo deb --install

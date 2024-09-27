@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ -f /usr/bin/lpad ] && rm -f /usr/bin/lpad
+ln /usr/bin/pad /usr/bin/lpad
+
+[ -f /usr/bin/rpad ] && rm -f /usr/bin/rpad
+ln /usr/bin/pad /usr/bin/rpad

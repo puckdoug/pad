@@ -3,3 +3,22 @@ name = "pad"
 version = "0.1.0"
 edition = "2021"
 default-run = "pad"
+
+[dev-dependencies]
+cargo-deb = ">=2.7.0"
+
+[package.metadata.deb]
+maintainer = "Doug Morris <doug@mhost.com>"
+copyright = "2024, Doug Morris <doug@mhost.com>"
+license-file = ["LICENSE"]
+extended-description = """\
+A shell command to pad words or numbers."""
+depends = "$auto"
+section = "utility"
+priority = "optional"
+assets = [
+#    # both syntaxes are equivalent:
+    ["target/release/pad", "usr/bin/", "755"],
+#    { source = "README.md", dest = "usr/share/doc/cargo-deb/README", mode = "644"},
+]
+maintainer-scripts = "deb"

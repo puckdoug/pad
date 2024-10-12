@@ -1,8 +1,8 @@
 use crate::LR;
 
-/// Pad a complete list of words. This is typically needed in case hte width
-/// in not known so that the complete list may be scanned to identify the
-/// maximum width word. However, it may be used for convenience.
+/// Pad a complete list of words. This is typically needed in case the width
+/// is not known so that the complete list must be scanned to identify the
+/// maximum width word.
 pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {

@@ -5,6 +5,7 @@ edition = "2021"
 default-run = "pad"
 
 [dev-dependencies]
+assert_cmd = "2.0.16"
 cargo-deb = ">=2.7.0"
 
 [package.metadata.deb]

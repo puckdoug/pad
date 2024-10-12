@@ -1,4 +1,5 @@
-use crate::LR;
+use crate::pad::config::*;
+use crate::pad::LR;
 
 /// Check the maximum width of all words provided in the list. This is needed
 /// in the default case when no width is provided. The program then assumes it
@@ -23,7 +24,7 @@ pub fn max_word_length(words: &Vec<String>) -> usize {
 /// words, every second word? More combinations and the real use case for building
 /// this was padding zeros left on a list of numbers. Whther the complex case is even
 /// needed isn't clear.
-pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<String> {
+pub fn process_lines(mut lines: Vec<String>, config: &mut Config) -> Vec<String> {
     if (config.left && config.llen == 0) || (config.right && config.rlen == 0) {
         let length = max_word_length(&lines);
         if config.left && config.llen == 0 {
@@ -36,11 +37,11 @@ pub fn process_lines(mut lines: Vec<String>, config: &mut crate::Config) -> Vec<
 
     // possible to optimize these two into a single pass?
     if config.left {
-        lines = crate::pad_word_list(&lines, config, LR::Left);
+        lines = crate::pad_word_list(&lines, &config, LR::Left);
     }
 
     if config.right {
-        lines = crate::pad_word_list(&lines, config, LR::Right);
+        lines = crate::pad_word_list(&lines, &config, LR::Right);
     }
 
     lines
@@ -80,7 +81,7 @@ mod processing {
 
         #[test]
         fn process_default_left_only() {
-            let mut config = crate::Config::new();
+            let mut config = crate::pad::Config::new();
             config.left = true;
             let mut lines = Vec::new();
             lines.push(String::from("one"));
@@ -94,7 +95,7 @@ mod processing {
 
         #[test]
         fn process_default_right_only() {
-            let mut config = crate::Config::new();
+            let mut config = crate::pad::Config::new();
             config.right = true;
             let mut lines = Vec::new();
             lines.push(String::from("one"));
@@ -108,7 +109,7 @@ mod processing {
 
         #[test]
         fn process_both() {
-            let mut config = crate::Config::new();
+            let mut config = crate::pad::Config::new();
             config.left = true;
             config.llen = 5;
             config.right = true;
@@ -128,7 +129,7 @@ mod processing {
 
         #[test]
         fn process_both_non_utf8() {
-            let mut config = crate::Config::new();
+            let mut config = crate::pad::Config::new();
             config.left = true;
             config.llen = 6;
             config.right = true;

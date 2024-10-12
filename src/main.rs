@@ -1,29 +1,11 @@
-use crate::config::*;
-use crate::input::*;
-use crate::output::*;
-use crate::padding::*;
 use std::env;
 use std::io;
 // use std::result;
+use pad::input::*;
+use pad::output::process_lines;
+use pad::Config;
 use std::sync::mpsc::channel;
 use std::thread;
-
-pub mod config;
-pub mod input;
-pub mod output;
-pub mod padding;
-
-/// the default string to use to pad words if none is specified
-pub const DEFAULT_PAD: &str = "0";
-
-/// LR is used to flag whether the upcoming arguments apply to left or right
-/// padding or none, in which case they should be treated as tokens to pad.
-#[derive(Debug, PartialEq)]
-pub enum LR {
-    Left,
-    Right,
-    None,
-}
 
 fn main() {
     // gather the command-line arguments

@@ -266,7 +266,7 @@ fn l_is_ok_for_left() {
 
 #[test]
 fn no_option_but_args() {
-    let mut config = crate::Config::new();
+    let mut config = crate::pad::Config::new();
     let mut words: Vec<String> = Vec::new();
     crate::parse_command_line(
         vec![String::from("lpad"), String::from("5"), String::from("x")],

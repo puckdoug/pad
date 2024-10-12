@@ -1,12 +1,26 @@
-use crate::LR;
+pub mod config;
+pub mod output;
+pub use crate::config::*;
+
+/// the default string to use to pad words if none is specified
+pub const DEFAULT_PAD: &str = "0";
+
+/// LR is used to flag whether the upcoming arguments apply to left or right
+/// padding or none, in which case they should be treated as tokens to pad.
+#[derive(Debug, PartialEq)]
+pub enum LR {
+    Left,
+    Right,
+    None,
+}
 
 /// Pad a complete list of words. This is typically needed in case the width
 /// is not known so that the complete list must be scanned to identify the
 /// maximum width word.
-pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec<String> {
+pub fn pad_word_list(words: &Vec<String>, config: &crate::pad::Config, lr: LR) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
-        padded.push(pad(word, config, &lr));
+        padded.push(pad(word, &config, &lr));
     }
     padded
 }
@@ -15,10 +29,10 @@ pub fn pad_word_list(words: &Vec<String>, config: &crate::Config, lr: LR) -> Vec
 /// The Config is set, each word passed in will be returned padded according
 /// to that configuration. This expects as arguments:
 /// - word: &str - the word to be padded
-/// - config: &crate::Config - the configuration
+/// - config: &crate::pad::Config - the configuration
 /// - lr: &LR - the direction to pad (Left or Right). Passing None will return
 ///   the word unchanged.
-pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
+pub fn pad(word: &str, config: &crate::pad::Config, lr: &LR) -> String {
     // pad the word to the length of the longest word
     let mut pad_str = String::new();
     let mut padded;
@@ -55,12 +69,12 @@ pub fn pad(word: &str, config: &crate::Config, lr: &LR) -> String {
 #[cfg(test)]
 mod lpad {
 
-    use crate::padding::pad;
-    use crate::LR;
+    use crate::pad::pad;
+    use crate::pad::LR;
 
     #[test]
     fn one() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         let word = String::from("one");
         let padded = pad(&word, &config, &LR::Left);
@@ -69,7 +83,7 @@ mod lpad {
 
     #[test]
     fn with_spaces() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         config.lpad = String::from(" ");
         let word = String::from("one");
@@ -79,7 +93,7 @@ mod lpad {
 
     #[test]
     fn longer_than_pad() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         let word = String::from("longer");
         let padded = pad(&word, &config, &LR::Left);
@@ -88,7 +102,7 @@ mod lpad {
 
     #[test]
     fn same_as_pad() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         let word = String::from("equal");
         let padded = pad(&word, &config, &LR::Left);
@@ -97,7 +111,7 @@ mod lpad {
 
     #[test]
     fn non_utf8() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 12;
         let word = String::from("ラウトは難しいです！");
         let padded = pad(&word, &config, &LR::Left);
@@ -112,7 +126,7 @@ mod lpad {
         words.push(String::from("three"));
         words.push(String::from("four"));
         words.push(String::from("five"));
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         let padded = crate::pad_word_list(&words, &config, LR::Left);
         assert_eq!("00one", padded[0]);
@@ -129,7 +143,7 @@ mod lpad {
         words.push(String::from("three"));
         words.push(String::from("four"));
         words.push(String::from("five"));
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.llen = 5;
         config.lpad = String::from(" ");
         let padded = crate::pad_word_list(&words, &config, LR::Left);
@@ -143,12 +157,12 @@ mod lpad {
 #[cfg(test)]
 mod rpad {
 
-    use crate::padding::pad;
-    use crate::LR;
+    use crate::pad::pad;
+    use crate::pad::LR;
 
     #[test]
     fn one() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         let word = String::from("one");
         let padded = pad(&word, &config, &LR::Right);
@@ -157,7 +171,7 @@ mod rpad {
 
     #[test]
     fn with_spaces() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         config.rpad = String::from(" ");
         let word = String::from("one");
@@ -167,7 +181,7 @@ mod rpad {
 
     #[test]
     fn longer_than_pad() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         let word = String::from("longer");
         let padded = pad(&word, &config, &LR::Right);
@@ -176,7 +190,7 @@ mod rpad {
 
     #[test]
     fn same_as_pad() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         let word = String::from("equal");
         let padded = pad(&word, &config, &LR::Right);
@@ -185,7 +199,7 @@ mod rpad {
 
     #[test]
     fn non_utf8() {
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 12;
         let word = String::from("ラウトは難しいです！");
         let padded = pad(&word, &config, &LR::Right);
@@ -200,7 +214,7 @@ mod rpad {
         words.push(String::from("three"));
         words.push(String::from("four"));
         words.push(String::from("five"));
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         let padded = crate::pad_word_list(&words, &config, LR::Right);
         assert_eq!("one00", padded[0]);
@@ -217,7 +231,7 @@ mod rpad {
         words.push(String::from("three"));
         words.push(String::from("four"));
         words.push(String::from("five"));
-        let mut config = crate::Config::new();
+        let mut config = crate::pad::Config::new();
         config.rlen = 5;
         config.rpad = String::from(" ");
         let padded = crate::pad_word_list(&words, &config, LR::Right);
@@ -231,12 +245,13 @@ mod rpad {
 
 #[cfg(test)]
 mod other {
-    use crate::padding::pad;
-    use crate::LR;
+    use crate::pad::config::*;
+    use crate::pad::pad;
+    use crate::pad::LR;
 
     #[test]
     fn no_pad_direction_returns_word() {
-        let mut config = crate::Config::new();
+        let mut config = Config::new();
         config.rlen = 5;
         let word = String::from("one");
         let padded = pad(&word, &config, &LR::None);

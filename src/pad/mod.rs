@@ -20,7 +20,7 @@ pub enum LR {
 pub fn pad_word_list(words: &Vec<String>, config: &crate::pad::Config, lr: LR) -> Vec<String> {
     let mut padded = Vec::new();
     for word in words {
-        padded.push(pad(word, &config, &lr));
+        padded.push(pad(word, config, &lr));
     }
     padded
 }

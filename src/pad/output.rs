@@ -37,11 +37,11 @@ pub fn process_lines(mut lines: Vec<String>, config: &mut Config) -> Vec<String>
 
     // possible to optimize these two into a single pass?
     if config.left {
-        lines = crate::pad_word_list(&lines, &config, LR::Left);
+        lines = crate::pad_word_list(&lines, config, LR::Left);
     }
 
     if config.right {
-        lines = crate::pad_word_list(&lines, &config, LR::Right);
+        lines = crate::pad_word_list(&lines, config, LR::Right);
     }
 
     lines
@@ -59,7 +59,7 @@ mod processing {
 
         #[test]
         fn max_word_length_empty_list() {
-            let mut lines = Vec::new();
+            let lines = Vec::new();
             let max = max_word_length(&lines);
             assert_eq!(0, max);
         }

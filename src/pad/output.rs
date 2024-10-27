@@ -58,6 +58,13 @@ mod processing {
         use super::*;
 
         #[test]
+        fn max_word_length_empty_list() {
+            let mut lines = Vec::new();
+            let max = max_word_length(&lines);
+            assert_eq!(0, max);
+        }
+
+        #[test]
         fn longest_word() {
             let mut lines = Vec::new();
             lines.push(String::from("one"));

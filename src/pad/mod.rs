@@ -119,6 +119,15 @@ mod lpad {
     }
 
     #[test]
+    fn pad_empty_word() {
+        let mut config = crate::pad::Config::new();
+        config.llen = 5;
+        let word = String::new();
+        let padded = pad(&word, &config, &LR::Left);
+        assert_eq!("00000", padded)
+    }
+
+    #[test]
     fn five_words() {
         let mut words = Vec::new();
         words.push(String::from("one"));
